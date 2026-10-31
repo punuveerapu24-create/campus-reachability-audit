@@ -10,6 +10,7 @@ A standalone, deterministic Python algorithmic engine and interactive web servic
 
 Developed as part of the **Design and Analysis of Algorithms (DAA) Lab Challenge**.
 
+🚀 **Live Web Application:** [https://campus-reachability-audit.onrender.com/](https://campus-reachability-audit.onrender.com/)
 ---
 
 ## 📌 Problem Overview
