@@ -2,9 +2,11 @@
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![Algorithms](https://img.shields.io/badge/Algorithms-DFS%20%7C%20BFS%20%7C%20Shortest%20Path-brightgreen.svg)]()
+[![Web Dashboard](https://img.shields.io/badge/Web%20Dashboard-Flask%20%2B%20Gunicorn-orange.svg)]()
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A standalone, deterministic Python algorithmic tool for analyzing campus walkway graphs, auditing reachability across connected campus zones, recording exact depth-first and breadth-first search traversals, and reconstructing optimal emergency evacuation routes.
+A standalone, deterministic Python algorithmic engine and interactive web service for analyzing campus walkway graphs, auditing reachability across connected campus zones, recording exact depth-first and breadth-first search traversals, and reconstructing optimal emergency evacuation routes.
 
 Developed as part of the **Design and Analysis of Algorithms (DAA) Lab Challenge**.
 
@@ -26,13 +28,46 @@ An undirected graph $G = (V, E)$ represents campus buildings and walkways, where
    - Traversals strictly remain within the source vertex's connected component.
 3. **Emergency Route Audit (Shortest Paths)**:
    - For any query destination building $t$, reconstructs the minimum-edge walkway route from $s$ to $t$.
-   - Directly backtracks through BFS discovery parent pointers $\mathcal{O}(\text{path length})$ without executing auxiliary shortest-path algorithms.
+   - Directly backtracks through BFS discovery parent pointers in $\mathcal{O}(\text{path length})$ without executing auxiliary shortest-path algorithms.
+
+---
+
+## 🌐 Live Web Service & Dashboard
+
+The repository includes a modern web dashboard (`app.py`) allowing interactive experimentation and instant visual auditing:
+
+- **Interactive Preset Loaders**: Quickly test connected, disconnected, and isolated campus topologies.
+- **Visual Analytics**: Instant metric cards for components, source node, traversal order tags, and a live route table.
+- **Raw DAA Standard Output**: Displays the exact `sys.stdout` text format required for automated grading.
+- **REST API**:
+  - `POST /api/audit`: Accepts JSON payload `{"input": "..."}` or raw text, returning structured metrics and the exact lab output.
+  - `GET /healthz`: Healthcheck endpoint for cloud orchestrators.
+
+---
+
+## ☁️ Deploying to Render (Step-by-Step)
+
+To get a public **Live URL** (e.g. `https://campus-reachability-audit.onrender.com`):
+
+1. **Sign Up / Log In** to [Render.com](https://render.com).
+2. Click **New +** and select **Web Service**.
+3. Under **Connect a repository**, find and select `campus-reachability-audit`.
+4. Configure the settings:
+   - **Name**: `campus-reachability-audit` (or your preferred subdomain)
+   - **Region**: Choose the closest region (e.g., Singapore, Frankfurt, Oregon)
+   - **Branch**: `main`
+   - **Runtime**: `Python 3`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `gunicorn app:app`
+   - **Instance Type**: **Free**
+5. Click **Create Web Service**.
+6. Render will automatically build the dependencies, launch the server, and provide your active **Live URL**!
 
 ---
 
 ## 📥 Input Specification
 
-All inputs are read directly from standard input (`sys.stdin`):
+All inputs can be piped via standard input (`sys.stdin`) or submitted through the Web Dashboard / REST API:
 
 - **Line 1**: `n m` (where $n$ is the number of vertices, $m$ is the number of undirected edges).
 - **Next $m$ lines**: `u v` (undirected edge connecting building $u$ and building $v$).
@@ -49,68 +84,33 @@ All inputs are read directly from standard input (`sys.stdin`):
 
 ## 📤 Output Specification
 
-All outputs are written to standard output (`sys.stdout`) according to exact specifications:
-
 1. `COMPONENTS c` — Number of connected components $c$.
 2. `LABELS l_0 l_1 ... l_{n-1}` — Representative component label for each vertex $0 \le i < n$.
 3. `DFS v_1 v_2 ...` — Recursive DFS visitation sequence starting at $s$.
 4. `BFS v_1 v_2 ...` — Queue-based BFS visitation sequence starting at $s$.
 5. For each queried target $t$:
-   - If reachable: `ROUTE t d v_0 v_1 ... v_d` (where $d$ is the path distance in edge count, followed by the $d+1$ vertices along the path from $s$ to $t$).
+   - If reachable: `ROUTE t d v_0 v_1 ... v_d` (where $d$ is path distance in edge count, followed by the $d+1$ vertices along the path from $s$ to $t$).
    - If unreachable: `ROUTE t UNREACHABLE`
 
 ---
 
-## 🚀 Quickstart & Usage
+## 🚀 Local Execution
 
-### Prerequisites
-- Python 3.8 or higher.
-- No third-party dependencies required (pure standard library: `sys`, `collections.deque`, `typing`).
-
-### Execution via CLI Redirection
-You can run the script by piping or redirecting an input file:
-
+### 1. Standalone CLI Script (Pure Standard Library)
 ```bash
 python campus_reachability.py < sample_input.txt
 ```
 
-### Interactive Execution
+### 2. Interactive Web Dashboard (Local Server)
 ```bash
-python campus_reachability.py
+python -m pip install -r requirements.txt
+python app.py
 ```
-*(Paste input and trigger EOF via `Ctrl+D` on Linux/macOS or `Ctrl+Z` then `Enter` on Windows).*
+Open [http://localhost:5000](http://localhost:5000) in your web browser.
 
-### Running Unit Tests
+### 3. Running Unit Tests
 ```bash
-python -m unittest test_campus_reachability.py
-```
-
----
-
-## 💡 Example
-
-### Sample Input
-```text
-5 4
-0 1
-0 3
-1 2
-3 4
-0 3
-2
-4
-0
-```
-
-### Sample Output
-```text
-COMPONENTS 1
-LABELS 0 0 0 0 0
-DFS 0 1 2 3 4
-BFS 0 1 3 2 4
-ROUTE 2 2 0 1 2
-ROUTE 4 2 0 3 4
-ROUTE 0 0 0
+python -m unittest discover -s . -t .
 ```
 
 ---
@@ -133,7 +133,10 @@ ROUTE 0 0 0
 ```
 campus-reachability-audit/
 ├── .gitignore                    # Python gitignore configuration
+├── app.py                        # Web application & REST API (Flask/Gunicorn)
 ├── campus_reachability.py        # Core algorithm implementation
+├── render.yaml                   # Render Blueprint configuration
+├── requirements.txt              # Web service dependencies
 ├── test_campus_reachability.py   # Automated unit test suite
 └── README.md                     # Comprehensive project documentation
 ```
