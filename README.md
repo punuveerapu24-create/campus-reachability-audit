@@ -3,7 +3,6 @@
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![Algorithms](https://img.shields.io/badge/Algorithms-DFS%20%7C%20BFS%20%7C%20Shortest%20Path-brightgreen.svg)]()
 [![Web Dashboard](https://img.shields.io/badge/Web%20Dashboard-Flask%20%2B%20Gunicorn-orange.svg)]()
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A standalone, deterministic Python algorithmic engine and interactive web service for analyzing campus walkway graphs, auditing reachability across connected campus zones, recording exact depth-first and breadth-first search traversals, and reconstructing optimal emergency evacuation routes.
@@ -43,26 +42,6 @@ The repository includes a modern web dashboard (`app.py`) allowing interactive e
 - **REST API**:
   - `POST /api/audit`: Accepts JSON payload `{"input": "..."}` or raw text, returning structured metrics and the exact lab output.
   - `GET /healthz`: Healthcheck endpoint for cloud orchestrators.
-
----
-
-## ☁️ Deploying to Render (Step-by-Step)
-
-To get a public **Live URL** (e.g. `https://campus-reachability-audit.onrender.com`):
-
-1. **Sign Up / Log In** to [Render.com](https://render.com).
-2. Click **New +** and select **Web Service**.
-3. Under **Connect a repository**, find and select `campus-reachability-audit`.
-4. Configure the settings:
-   - **Name**: `campus-reachability-audit` (or your preferred subdomain)
-   - **Region**: Choose the closest region (e.g., Singapore, Frankfurt, Oregon)
-   - **Branch**: `main`
-   - **Runtime**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `gunicorn app:app`
-   - **Instance Type**: **Free**
-5. Click **Create Web Service**.
-6. Render will automatically build the dependencies, launch the server, and provide your active **Live URL**!
 
 ---
 
